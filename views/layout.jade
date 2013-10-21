@@ -2,7 +2,9 @@ doctype 5
 html
   head
     title= title
-    script(src="/socket.io/socket.io.js", type="text/javascript")
     link(rel='stylesheet', href='/stylesheets/style.css')
+    script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js')
+    script(type='text/javascript', src='/socket.io/socket.io.js')
+    script(type='text/javascript', src='/javascripts/display.js')
   body
     block content

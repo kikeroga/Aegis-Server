@@ -1,7 +1,5 @@
 
-/**
- * Module dependencies.
- */
+/* Configuration */
 
 // TODO DBとかにする
 var value1 = -1;
@@ -12,7 +10,7 @@ var routes = require('./routes/main.js');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-
+// var $ = require('jquery');
 var app = express();
 var server = http.createServer(app);
 
@@ -32,27 +30,39 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/users', user.list);
-
-// Ready for Socket.io
-var socket = server.listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
-
 //----------------------------------------------------------------------//
 
-// 値の変更を受け取ったとき
-socket.on('connection', function(client) {
-  // connect
-  client.on('value update', function(decimal) {
-    value1 = decimal;
-    console.log('device1 receive: ' + value1);
+app.get('/', routes.index);
+// app.get('/users', user.list);
 
-    socket.emit('value change', value1);
-    socket.broadcast.emit('value change', value1);
-  });
-  client.on('disconnect', function() {
-    // disconnect
-  });
+var socket = server.listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
+});
+var io = require('socket.io').listen(socket);
+
+io.sockets.on('connection', function(client) {
+    console.log('connected by: ' + client.id);
+
+    client.on('valueUpdate', function(decimal) {
+        value1 = decimal;
+        console.log('device1 receive: ' + value1);
+
+/*
+        // $('#device1').html(value1);
+        $('#device1').prepend(value1);
+        console.log('Set value');
+*/
+
+/*
+        client.emit('valueChange', value1);
+        //socket.broadcast.emit('value change', value1);
+*/
+        client.emit('valueChange', value1);
+        //socket.broadcast.emit('value change', value1);
+    });
+
+    client.on('disconnect', function() {
+        // disconnect
+        console.log('disconnected by: ' + client.id);
+    });
 });
