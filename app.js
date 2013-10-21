@@ -66,3 +66,9 @@ io.sockets.on('connection', function(client) {
         console.log('disconnected by: ' + client.id);
     });
 });
+
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
+
