@@ -2,7 +2,7 @@ const PORT = 3000;
 
 // TODO DBとかにする
 var value1 = -1;
-var value2 = -1;
+//var value2 = -1;
 
 var express = require('express');
 var http = require('http');
@@ -24,14 +24,17 @@ var socket = server.listen(app.get('port'), function(){
 var io = require('socket.io').listen(socket);
 io.sockets.on('connection', function(client) {
     console.log(client.id + ' connected');
+    client.emit('init', value1);
 
     //client.on('change', function(decimal) {
     client.on('change', function(decimal) {
-        var value = decimal;
-        console.log(client.id + ': ' + value);
+        console.log(client.id + ': ' + decimal);
 
-        client.emit('update', value);
-        client.broadcast.emit('update', value);
+        // update
+        value1 = decimal;
+
+        client.emit('update', decimal);
+        client.broadcast.emit('update', decimal);
     });
 
     client.on('disconnect', function() {
